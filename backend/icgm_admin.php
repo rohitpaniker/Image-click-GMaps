@@ -20,7 +20,7 @@ function my_custom_post_map() {
     'description'   => 'Holds our map and map specific data',
     'public'        => true,
     'menu_position' => 5,
-    'supports'      => array( 'title'),
+    'supports'      => array( 'title', 'thumbnail'),
     'has_archive'   => true,
   );
   register_post_type( 'map', $args ); 
@@ -68,13 +68,11 @@ function map_box_content( $post ) {
     $address = get_post_meta( get_the_ID(), 'areaAdd', true );
 	  $edcbVal = get_post_meta( get_the_ID(), 'ECOD', true );
 	  echo '<label for="lat_val">Enter Latitude: </label>';
-	  echo '<input type="text" id="lat_val" name="lat_val" placeholder="Enter latitude" value='.$lat.'>';
-	  echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	  echo '<input type="text" class="widefat" id="lat_val" name="lat_val" placeholder="Enter latitude" value='.$lat.'>';
 	  echo '<label for="longi_val">Enter Longitude: </label>';
-	  echo '<input type="text" id="longi_val" name="longi_val" placeholder="Enter longitude" value='.$longi.'>';
-    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	  echo '<input type="text" class="widefat" id="longi_val" name="longi_val" placeholder="Enter longitude" value='.$longi.'>';
     echo '<label for="areaAdd">Enter Area Address: </label>';
-    echo '<input type="text" id="areaAdd" name="areaAdd" placeholder="Enter area address" value='.$address.'>';
+    echo '<textarea id="areaAdd" field="areaAdd" name="areaAdd" placeholder="Enter area address" class="widefat" value="40">'.$address."</textarea>";
 	  echo '<br><label for="ECOD">Enable</label> : ';
 	  if($edcbVal=="on") {
 	  	$edcbVal= ' checked="on" ';
@@ -82,13 +80,6 @@ function map_box_content( $post ) {
 	  	$edcbVal =''; 
 	  }
 	  echo '<input type="checkbox" id="ECOD" name="ECOD" '. $edcbVal.'>';
-
-	  $html = '<p class="description">';
-      $html .= 'Upload Image : ';
-	  $html .= '</p>';
-	  $html .= '<input type="file" id="wp_custom_attachment" name="wp_custom_attachment" value="" size="25" />';
-     
-    echo $html;
 	  //print_r($edcbVal);
 }
 
@@ -100,7 +91,7 @@ function map_box_save( $post_id ) {
 	  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 	  return;
 
-	  if ( !wp_verify_nonce( $_POST['map_box_content_nonce'], plugin_basename( __FILE__ ) ) )
+	  if ( isset($_POST['map_box_content_nonce']) && !wp_verify_nonce( $_POST['map_box_content_nonce'], plugin_basename( __FILE__ ) ) )
 	  return;
 
 	  if ( 'page' == $_POST['post_type'] ) {
@@ -126,4 +117,34 @@ function map_box_save( $post_id ) {
          
 }
 
+
+add_shortcode('icgm_maps', 'icgm_GMaps_shortcode');
+function icgm_GMaps_shortcode() {
+  global $post_id;
+  echo "HELLO, SHORTCODE HERE!";
+  $val = get_post_meta( $post_id, 'lat_val', true );
+  echo $val;
+
+  $args = array(
+        'offset' => 0,
+        'post_type' => 'map',
+        'nopaging' => true 
+    );
+    $all_posts = new WP_Query( $args );
+    //echo"<pre>";
+    //print_r($all_posts);
+        if ( $all_posts->have_posts() ) {
+            echo '<ul>';
+            while ( $all_posts->have_posts() ) {
+              $all_posts->the_post();
+              echo '<li>' . get_the_title() .'<br>'.get_the_post_thumbnail( $post_id, array(400, 400) ). '</li>';
+              $val =  get_post_meta($post_id,'areaAdd');
+              echo "<pre>";
+              echo sizeof($val);
+           }
+          echo '</ul>';
+        } else {
+        // no posts found
+      }
+}
 
