@@ -1,0 +1,12 @@
+.ICGMap-Parent {
+	width: 100%;
+}
+
+.Static-GMap {
+	width: 400px;
+	position: absolute;
+}
+
+div#rohit-ICGMaps-Main {
+	padding-left: 450px;
+}

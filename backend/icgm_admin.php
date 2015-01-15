@@ -1,4 +1,5 @@
 <?php
+
 function my_custom_post_map() {
   $labels = array(
     'name'               => _x( 'Image Click Google Maps', 'post type general name' ),
@@ -94,7 +95,7 @@ function map_box_save( $post_id ) {
 	  if ( isset($_POST['map_box_content_nonce']) && !wp_verify_nonce( $_POST['map_box_content_nonce'], plugin_basename( __FILE__ ) ) )
 	  return;
 
-	  if ( 'page' == $_POST['post_type'] ) {
+	  if ( 'page' == $_POST['map'] ) {
 	    if ( !current_user_can( 'edit_page', $post_id ) )
 	    return;
 	  } else {
@@ -134,17 +135,31 @@ function icgm_GMaps_shortcode() {
     //echo"<pre>";
     //print_r($all_posts);
         if ( $all_posts->have_posts() ) {
-            echo '<ul>';
+            ?>
+            <div class="ICGMap-Parent">
+            <div class="Static-GMap">
+                  <img src="https://maps.googleapis.com/maps/api/staticmap?center=40.756047,-73.9823259&zoom=13&size=600x300&markers=color:red|40.756047,-73.9823259" width="600" height="300">
+            </div>
+            <div id="rohit-ICGMaps-Main" class="icgmaps_main_class">
+            <?
             while ( $all_posts->have_posts() ) {
               $all_posts->the_post();
-              echo '<li>' . get_the_title() .'<br>'.get_the_post_thumbnail( $post_id, array(400, 400) ). '</li>';
-              $val =  get_post_meta($post_id,'areaAdd');
-              echo "<pre>";
-              echo sizeof($val);
+              ?>
+                <div class="location-images-main-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" >
+                  <?php
+                    echo get_the_title() .'<br>'.get_the_post_thumbnail( $post_id, array(400, 400) ) .'<br>'. get_post_meta(get_the_ID(),'lat_val', true) .'<br>'. get_post_meta(get_the_ID(),'longi_val', true) .'<br>'. get_post_meta(get_the_ID(),'areaAdd', true);
+                  ?>
+                </div>
+              <?
            }
-          echo '</ul>';
+          ?>
+          </div>
+          </div>
+          <?
         } else {
         // no posts found
       }
 }
+
+// Our custom post type function
 
