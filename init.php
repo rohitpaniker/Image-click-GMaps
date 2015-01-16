@@ -11,3 +11,9 @@ License: GPLv2
 
 require_once(plugin_dir_path( __FILE__ ).'backend/icgm_admin.php');
 require_once(plugin_dir_path( __FILE__ ).'frontend/icgm_ui.php');
+
+add_action( 'wp_enqueue_scripts', 'icgm_load_css_jquery' );
+function icgm_load_css_jquery(){
+  wp_enqueue_style( 'icgm_style', plugin_dir_url( __FILE__ ) . 'assets/css/icgm_style.css' );
+  wp_enqueue_script( 'icgm_jquery_js', plugin_dir_url( __FILE__ ) . 'assets/js/icgm_jquery_js.js', array('jquery')  );
+}

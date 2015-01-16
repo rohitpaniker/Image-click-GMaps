@@ -9,4 +9,17 @@
 
 div#rohit-ICGMaps-Main {
 	padding-left: 450px;
+	overflow-y: scroll;
+	height: 300px;
+}
+
+.img-title {
+	padding-left: 450px;
+	font-weight: bolder;
+	color: #000000;
+}
+
+.inner-image-title {
+	color: #000000;
+	font-weight: bolder;
 }
