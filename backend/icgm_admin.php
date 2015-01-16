@@ -151,7 +151,7 @@ function icgm_GMaps_shortcode() {
         ?>
             <div id="inner-map-image-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" class="inner-map-image location-images-main-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" data-lat="<?php echo get_post_meta(get_the_ID(),'lat_val', true); ?>" data-longi="<?php echo get_post_meta(get_the_ID(),'longi_val', true); ?>" style="cursor:pointer;">
             <?php
-              echo get_the_post_thumbnail( $post_id, array(400, 400) ). '<br><div class="inner-image-title">' .get_the_title() .'</div>'. get_post_meta(get_the_ID(),'areaAdd', true).'<br>';
+              echo get_the_post_thumbnail( $post_id, array(255, 94) ). '<br><div class="inner-image-title">' .get_the_title() .'</div>'. get_post_meta(get_the_ID(),'areaAdd', true).'<br>';
             ?>
             </div><br>
         <?php
