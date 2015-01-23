@@ -76,7 +76,7 @@ function map_box_content( $post ) {
     echo '<input type="text" class="widefat" id="longi_val" name="longi_val" placeholder="Enter longitude" value='.$longi.'>';
     echo '<label for="areaAdd">Enter Area Address: </label>';
     echo '<textarea id="areaAdd" field="areaAdd" name="areaAdd" placeholder="Enter area address" class="widefat" value="40">'.$address."</textarea>";
-    echo '<br><label for="ECOD">Enable</label> : ';
+    echo '<br><label for="ECOD" id="ECOD" name="ECOD" value='.$edcbVal.'>Show once?</label> : ';
     if($edcbVal=="on") {
       $edcbVal= ' checked="on" ';
     }else{ 
@@ -122,7 +122,19 @@ function map_box_save( $post_id ) {
 
 
 add_shortcode('icgm_maps', 'icgm_GMaps_shortcode');
-function icgm_GMaps_shortcode() {
+function icgm_GMaps_shortcode( $atts ) {
+  $imgtitle = $heading = ' ';
+  $showonce = $needhr ='true';
+
+  $at = shortcode_atts(array(
+    'imgtitle'=>' ',
+    'showonce'=> 'true',
+    'heading' => 'Some Title',
+    'needhr' => 'true', 
+    'id'     => '',
+    ), $atts);
+
+ 
   global $post_id;
   $val = get_post_meta( $post_id, 'lat_val', true );
   echo $val;
@@ -135,30 +147,75 @@ function icgm_GMaps_shortcode() {
   $all_posts = new WP_Query( $args );
   //echo"<pre>";
   //print_r($all_posts);
+
   if ( $all_posts->have_posts() ) {
     ?>
+    
+    <?php if( ("{$at['imgtitle']}" == ' ') && ("{$at['showonce']}" == 'true') ) {   ?>
     <div class="img-title">
-      ACCOMODATIONS
+      <?php echo $heading; ?>
     </div>
-    <div class="ICGMap-Parent">
-      <div class="Static-GMap">
-        <img id="Static-GMap" src="https://maps.googleapis.com/maps/api/staticmap?center=40.756047,-73.9823259&zoom=13&size=600x300&markers=color:red|40.756047,-73.9823259" width="600" height="300">
+      <div class="ICGMap-Parent">
+        <div class="Static-GMap">
+          <img id="Static-GMap" src="https://maps.googleapis.com/maps/api/staticmap?center=40.756047,-73.9823259&zoom=17&size=600x300&markers=color:red|40.756047,-73.9823259" width="600" height="300">
+        </div>
+        <div id="rohit-ICGMaps-Main" class="icgmaps_main_class">
+          <?php
+            while ( $all_posts->have_posts() ) {
+              $all_posts->the_post();
+              $skipDataShowonce = get_post_meta(get_the_ID(),'ECOD', true);
+              if ( $skipDataShowonce == 'on' ) {  }
+              else {
+          ?>
+              <div id="inner-map-image-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" class="inner-map-image location-images-main-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" data-lat="<?php echo get_post_meta(get_the_ID(),'lat_val', true); ?>" data-longi="<?php echo get_post_meta(get_the_ID(),'longi_val', true); ?>" data-showonce="<?php echo get_post_meta(get_the_ID(),'ECOD', true); ?>"  style="cursor:pointer;">
+              <?php
+                echo get_the_post_thumbnail( $post_id, array(255, 94) ). '<br><div class="inner-image-title">' .get_the_title() .'</div>'. get_post_meta(get_the_ID(),'areaAdd', true).'<br>';
+              ?>
+              </div><br>
+          <?php
+              }
+            }
+          ?>
+        </div>
       </div>
-      <div id="rohit-ICGMaps-Main" class="icgmaps_main_class">
-        <?php
-          while ( $all_posts->have_posts() ) {
-            $all_posts->the_post();
-        ?>
-            <div id="inner-map-image-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" class="inner-map-image location-images-main-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" data-lat="<?php echo get_post_meta(get_the_ID(),'lat_val', true); ?>" data-longi="<?php echo get_post_meta(get_the_ID(),'longi_val', true); ?>" style="cursor:pointer;">
-            <?php
-              echo get_the_post_thumbnail( $post_id, array(255, 94) ). '<br><div class="inner-image-title">' .get_the_title() .'</div>'. get_post_meta(get_the_ID(),'areaAdd', true).'<br>';
-            ?>
-            </div><br>
-        <?php
-          }
-        ?>
-      </div>
+      <?php } ?>
+
+
+
+
+ <?php if( "{$at['imgtitle']}" != ' ' && "{$at['showonce']}" == 'true' && "{$at['heading']}" != 'Some Title' && "{$at['id']}" != '') {  ?>
+    <?php if("{$at['needhr']}" == 'true') {  ?>
+    <hr>
+    <?php } ?>
+    <div class="img-title">
+      <?php echo "{$at['heading']}"; ?>
     </div>
+
+      <div class="ICGMap-Parent">
+        <div class="Static-GMap">
+          <img id="<?php echo "{$at['id']}"; ?>" src="https://maps.googleapis.com/maps/api/staticmap?center=40.756047,-73.9823259&zoom=17&size=600x300&markers=color:red|40.756047,-73.9823259" width="600" height="300">
+        </div>
+        <div id="rohit-ICGMaps-Main" class="icgmaps_main_class">
+          <?php
+            while ( $all_posts->have_posts() ) {
+              $all_posts->the_post();
+              if(get_the_title() == ("{$at['imgtitle']}")) {
+          ?>
+                  <div id="inner-map-image-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" class="inner-map-image2 location-images-main-<?php echo strtolower(str_replace(' ', '-', get_the_title())); ?>" data-lat="<?php echo get_post_meta(get_the_ID(),'lat_val', true); ?>" data-longi="<?php echo get_post_meta(get_the_ID(),'longi_val', true); ?>" data-showonce="<?php echo get_post_meta(get_the_ID(),'ECOD', true); ?>" data-id="<?php echo "{$at['id']}"; ?>" style="cursor:pointer;">
+                  <?php
+                    echo get_the_post_thumbnail( $post_id, array(255, 94) ). '<br><div class="inner-image-title">' .get_the_title() .'</div>'. get_post_meta(get_the_ID(),'areaAdd', true).'<br>';
+                  ?>
+                  </div><br>
+          <?php
+              }
+            }
+          ?>
+        </div>
+      </div>
+      <?php } ?>
+
+
+
     <?php
   } //else {
   // no posts found
