@@ -153,7 +153,7 @@ function icgm_GMaps_shortcode( $atts ) {
     
     <?php if( ("{$at['imgtitle']}" == ' ') && ("{$at['showonce']}" == 'true') ) {   ?>
     <div class="img-title">
-      <?php echo $heading; ?>
+      <?php echo "{$at['heading']}"; ?>
     </div>
       <div class="ICGMap-Parent">
         <div class="Static-GMap">
